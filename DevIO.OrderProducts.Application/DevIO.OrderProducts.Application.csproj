@@ -14,4 +14,9 @@
     <ProjectReference Include="..\DevIO.OrderProducts.Domain\DevIO.OrderProducts.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Validations\Produto\" />
+  </ItemGroup>
+
 </Project>
