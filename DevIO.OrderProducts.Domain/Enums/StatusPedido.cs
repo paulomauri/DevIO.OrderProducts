@@ -9,8 +9,8 @@ namespace DevIO.OrderProducts.Domain.Enums
     public enum StatusPedido
     {
         Novo = 0,
-        AguardandoPagamento = 1,
-        Pago = 2,
+        Reservado = 1,
+        Finalizado = 2,
         Cancelado = 3,
         Entregue = 4
     }
