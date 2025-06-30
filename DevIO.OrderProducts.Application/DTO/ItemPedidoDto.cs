@@ -8,10 +8,10 @@ namespace DevIO.OrderProducts.Application.DTO;
 
 public record ItemPedidoDto
 {
-    public Guid Id { get; private set; }
-    public Guid PedidoId { get; private set; }
-    public Guid ProdutoId { get; private set; }
-    public string? Observacao { get; private set; }
-    public int Quantidade { get; private set; }
-    public decimal PrecoUnitario { get; private set; }
+    public Guid Id { get; set; }
+    public Guid PedidoId { get; set; }
+    public Guid ProdutoId { get; set; }
+    public string? Observacao { get; set; }
+    public int Quantidade { get; set; }
+    public decimal PrecoUnitario { get; set; }
 }
