@@ -1,4 +1,5 @@
 ﻿using DevIO.OrderProducts.Application.Commands.Pedido;
+using DevIO.OrderProducts.Application.Interfaces;
 using DevIO.OrderProducts.Domain.Interfaces;
 using MediatR;
 
@@ -9,11 +10,14 @@ public class CreatePedidoHandler : IRequestHandler<CreatePedidoCommand, Guid>
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IUnitOfWork _unitOfWork;
-    
-    public CreatePedidoHandler(IPedidoRepository pedidoRepository, IUnitOfWork unitOfWork)
+    private readonly IRedisCacheService _cache;
+    private const string CacheKey = "pedido";
+
+    public CreatePedidoHandler(IPedidoRepository pedidoRepository, IUnitOfWork unitOfWork, IRedisCacheService cache)
     {
         _pedidoRepository = pedidoRepository;
         _unitOfWork = unitOfWork;
+        _cache = cache; 
     }
 
     public async Task<Guid> Handle(CreatePedidoCommand request, CancellationToken cancellationToken)
@@ -27,6 +31,8 @@ public class CreatePedidoHandler : IRequestHandler<CreatePedidoCommand, Guid>
 
         await _pedidoRepository.AdicionarAsync(pedido);
         await _unitOfWork.CommitAsync(cancellationToken);
+        await _cache.RemoveAsync(CacheKey);
+
         return pedido.Id;
     }
 }

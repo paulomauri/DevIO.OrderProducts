@@ -1,6 +1,7 @@
-﻿using MediatR;
-using DevIO.OrderProducts.Application.Commands.Pedido;
+﻿using DevIO.OrderProducts.Application.Commands.Pedido;
+using DevIO.OrderProducts.Application.Interfaces;
 using DevIO.OrderProducts.Domain.Interfaces;
+using MediatR;
 
 namespace DevIO.OrderProducts.Application.Handlers.Pedido;
 
@@ -8,10 +9,13 @@ public class AtualizaStatusPedidoHandler : IRequestHandler<AtualizarStatusPedido
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public AtualizaStatusPedidoHandler(IPedidoRepository pedidoRepository, IUnitOfWork unitOfWork)
+    private readonly IRedisCacheService _cache;
+    private const string CacheKey = "pedido";
+    public AtualizaStatusPedidoHandler(IPedidoRepository pedidoRepository, IUnitOfWork unitOfWork, IRedisCacheService cache)
     {
         _pedidoRepository = pedidoRepository;
         _unitOfWork = unitOfWork;
+        _cache = cache;
     }
 
     public async Task Handle(AtualizarStatusPedidoCommand request, CancellationToken cancellationToken)
@@ -22,5 +26,6 @@ public class AtualizaStatusPedidoHandler : IRequestHandler<AtualizarStatusPedido
         pedido.AlterarStatus((Domain.Enums.StatusPedido) request.Status );
         await _pedidoRepository.AtualizarAsync(pedido);
         await _unitOfWork.CommitAsync(cancellationToken);
+        await _cache.RemoveAsync(CacheKey); // Remove o cache para garantir que os dados estejam atualizados
     }
 }

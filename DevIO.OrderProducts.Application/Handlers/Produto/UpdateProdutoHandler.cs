@@ -1,4 +1,5 @@
 ﻿using DevIO.OrderProducts.Application.Commands.Produto;
+using DevIO.OrderProducts.Application.Interfaces;
 using DevIO.OrderProducts.Domain.Interfaces;
 using MediatR;
 
@@ -8,11 +9,14 @@ public class UpdateProdutoHandler
 {
     private readonly IProdutoRepository _produtoRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IRedisCacheService _cache;
+    private const string CacheKey = "produto";
 
-    public UpdateProdutoHandler(IProdutoRepository produtoRepository, IUnitOfWork unitOfWork)
+    public UpdateProdutoHandler(IProdutoRepository produtoRepository, IUnitOfWork unitOfWork, IRedisCacheService cache)
     {
         _produtoRepository = produtoRepository;
         _unitOfWork = unitOfWork;
+        _cache = cache;
     }
 
     public async Task<Unit> Handle(UpdateProdutoCommand request, CancellationToken cancellationToken)
@@ -24,6 +28,8 @@ public class UpdateProdutoHandler
         produto.Atualizar(request.Nome, request.Descricao ?? "", request.Preco);
         await _produtoRepository.AtualizarAsync(produto);
         await _unitOfWork.CommitAsync(cancellationToken);
+
+        await _cache.RemoveAsync(CacheKey);
 
         return Unit.Value;
     }

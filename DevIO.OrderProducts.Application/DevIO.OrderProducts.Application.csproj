@@ -16,8 +16,4 @@
     <ProjectReference Include="..\DevIO.OrderProducts.Domain\DevIO.OrderProducts.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
 </Project>

@@ -14,7 +14,8 @@ public class ItemPedido : IEntityTypeConfiguration<DevIO.OrderProducts.Domain.En
 
         builder.Property(i => i.Observacao)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasColumnType("varchar")
+            .HasMaxLength(500);
 
         builder.Property(i => i.PrecoUnitario)
             .HasColumnType("decimal(18,2)");
