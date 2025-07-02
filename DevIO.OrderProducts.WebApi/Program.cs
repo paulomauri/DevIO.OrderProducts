@@ -1,10 +1,12 @@
 using DevIO.OrderProducts.Application.Commands.Pedido;
 using DevIO.OrderProducts.Application.Commands.Produto;
+using DevIO.OrderProducts.Application.Interfaces.Messaging;
 using DevIO.OrderProducts.Application.Settings;
 using DevIO.OrderProducts.Application.Validations.Pedido;
 using DevIO.OrderProducts.Application.Validations.Produto;
 using DevIO.OrderProducts.Infrastructure.Data;
 using DevIO.OrderProducts.Infrastructure.IoC;
+using DevIO.OrderProducts.Infrastructure.Messaging;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +37,9 @@ builder.Services.AddCachedDependencies();
 
 // Registra a camada de injeção de dependência e infraestrutura
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Kafka Producer Service
+builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
 
 var app = builder.Build();
 

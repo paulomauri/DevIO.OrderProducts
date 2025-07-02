@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevIO.OrderProducts.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevIO.OrderProducts.WebApi", "DevIO.OrderProducts.WebApi\DevIO.OrderProducts.WebApi.csproj", "{773CB3DA-E024-405B-B442-C1854B11FE47}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevIO.OrderProducts.Worker", "DevIO.OrderProducts.Worker", "{82B7235F-B307-419A-8AB9-3CD9DB9C97FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevIO.OrderProducts.Worker", "DevIO.OrderProducts.Worker\DevIO.OrderProducts.Worker.csproj", "{EEBD08E8-6878-4149-AD4B-CEC1FD620FB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,10 @@ Global
 		{773CB3DA-E024-405B-B442-C1854B11FE47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{773CB3DA-E024-405B-B442-C1854B11FE47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{773CB3DA-E024-405B-B442-C1854B11FE47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEBD08E8-6878-4149-AD4B-CEC1FD620FB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEBD08E8-6878-4149-AD4B-CEC1FD620FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEBD08E8-6878-4149-AD4B-CEC1FD620FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEBD08E8-6878-4149-AD4B-CEC1FD620FB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +67,7 @@ Global
 		{9884EA29-7CE6-440A-B53F-6AA7455CA8E1} = {A666B907-B2E5-4A44-A347-DBEE8396F047}
 		{B80AD6EE-28A6-4FB6-8406-D57CEAA2E825} = {B220EEDA-E7E6-48C3-A233-424DDF7216B5}
 		{773CB3DA-E024-405B-B442-C1854B11FE47} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{EEBD08E8-6878-4149-AD4B-CEC1FD620FB8} = {82B7235F-B307-419A-8AB9-3CD9DB9C97FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C30681F4-B731-477D-B98E-84E5E018AAB3}

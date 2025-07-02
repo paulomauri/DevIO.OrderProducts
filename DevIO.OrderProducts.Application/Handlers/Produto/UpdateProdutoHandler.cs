@@ -1,5 +1,7 @@
 ﻿using DevIO.OrderProducts.Application.Commands.Produto;
+using DevIO.OrderProducts.Application.Events.Produto;
 using DevIO.OrderProducts.Application.Interfaces;
+using DevIO.OrderProducts.Application.Interfaces.Messaging;
 using DevIO.OrderProducts.Domain.Interfaces;
 using MediatR;
 
@@ -10,13 +12,15 @@ public class UpdateProdutoHandler
     private readonly IProdutoRepository _produtoRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRedisCacheService _cache;
+    private readonly IKafkaProducerService _kafka;
     private const string CacheKey = "produto";
 
-    public UpdateProdutoHandler(IProdutoRepository produtoRepository, IUnitOfWork unitOfWork, IRedisCacheService cache)
+    public UpdateProdutoHandler(IProdutoRepository produtoRepository, IUnitOfWork unitOfWork, IRedisCacheService cache, IKafkaProducerService kafka)
     {
         _produtoRepository = produtoRepository;
         _unitOfWork = unitOfWork;
         _cache = cache;
+        _kafka = kafka;
     }
 
     public async Task<Unit> Handle(UpdateProdutoCommand request, CancellationToken cancellationToken)
@@ -26,10 +30,20 @@ public class UpdateProdutoHandler
         if (produto == null) throw new KeyNotFoundException("Produto não encontrado.");
 
         produto.Atualizar(request.Nome, request.Descricao ?? "", request.Preco);
+        
         await _produtoRepository.AtualizarAsync(produto);
+        
         await _unitOfWork.CommitAsync(cancellationToken);
 
         await _cache.RemoveAsync(CacheKey);
+
+        await _kafka.ProduceAsync("produto-atualizado", new ProdutoAtualizadoEvent
+        {
+            ProdutoId = produto.Id,
+            Nome = produto.Nome,
+            Preco = produto.Preco,
+            DataAtualizacao = DateTime.UtcNow
+        });
 
         return Unit.Value;
     }
