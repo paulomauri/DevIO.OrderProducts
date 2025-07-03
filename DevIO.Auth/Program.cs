@@ -1,4 +1,5 @@
 using DevIO.Auth.Models;
+using DevIO.Auth.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register the JWT settings and token service
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

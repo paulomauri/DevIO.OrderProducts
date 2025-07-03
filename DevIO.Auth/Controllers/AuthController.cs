@@ -1,4 +1,6 @@
-﻿using DevIO.Auth.Models;
+﻿using DevIO.Auth.Infrastructure;
+using DevIO.Auth.Models;
+using DevIO.Auth.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,42 +15,49 @@ namespace DevIO.Auth.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly JwtSettings _jwtSettings;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(IOptions<JwtSettings> jwtSettings)
+    public AuthController(IOptions<JwtSettings> jwtSettings, ITokenService tokenService)
     {
         _jwtSettings = jwtSettings.Value;
+        _tokenService = tokenService;
     }
 
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        // Simulação de validação de usuário
         if (request.Username != "admin" || request.Password != "admin")
             return Unauthorized();
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
+        var accessToken = _tokenService.GenerateAccessToken(request.Username, "Admin");
+        var refreshToken = _tokenService.GenerateRefreshToken(request.Username);
 
-        var claims = new[]
+        InMemoryRefreshTokenStore.Save(refreshToken);
+
+        return Ok(new
         {
-            new Claim(ClaimTypes.Name, request.Username),
-            new Claim(ClaimTypes.Role, "Admin")
-        };
+            access_token = accessToken,
+            refresh_token = refreshToken.Token
+        });
+    }
 
-        var tokenDescriptor = new SecurityTokenDescriptor
+    [HttpPost("refresh")]
+    public IActionResult Refresh([FromBody] string refreshToken)
+    {
+        var token = InMemoryRefreshTokenStore.Get(refreshToken);
+        if (token is null || token.IsExpired)
+            return Unauthorized("Refresh token inválido ou expirado.");
+
+        var newAccessToken = _tokenService.GenerateAccessToken(token.Username, "Admin");
+        var newRefreshToken = _tokenService.GenerateRefreshToken(token.Username);
+
+        InMemoryRefreshTokenStore.Remove(refreshToken);
+        InMemoryRefreshTokenStore.Save(newRefreshToken);
+
+        return Ok(new
         {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
-            Issuer = _jwtSettings.Issuer,
-            Audience = _jwtSettings.Audience,
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var jwt = tokenHandler.WriteToken(token);
-
-        return Ok(new { token = jwt });
+            access_token = newAccessToken,
+            refresh_token = newRefreshToken.Token
+        });
     }
 }
