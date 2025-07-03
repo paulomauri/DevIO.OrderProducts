@@ -1,0 +1,6 @@
+@DevIO.Auth_HostAddress = http://localhost:5038
+
+GET {{DevIO.Auth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

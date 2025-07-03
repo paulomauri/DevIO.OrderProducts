@@ -2,10 +2,12 @@
 using DevIO.OrderProducts.Application.Queries.Produto;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevIO.OrderProducts.WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ProdutosController : ControllerBase

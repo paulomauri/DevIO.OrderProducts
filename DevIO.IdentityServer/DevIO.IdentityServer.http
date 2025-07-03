@@ -1,0 +1,6 @@
+@DevIO.IdentityServer_HostAddress = http://localhost:5107
+
+GET {{DevIO.IdentityServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
