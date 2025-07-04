@@ -51,3 +51,39 @@ Log								Serilog, Logstash, Elasticsearch, Kibana
 Container						Docker, Docker Compose
 Orquestração					Kubernetes (Deployments, Services, Ingress, Secrets, ConfigMaps)
 Outros							xUnit (testes), AutoMapper, IOptions Pattern
+
+Como Executar Localmente
+Requisitos: Docker, .NET 8 SDK, Redis, Kafka, SQL Server
+
+# Build e run do projeto principal e auth
+dotnet build
+dotnet run --project DevIO.OrderProducts.WebApi
+dotnet run --project DevIO.Auth.WebApi
+
+🐳 Docker
+
+# Build imagens
+docker build -t devio-api ./DevIO.OrderProducts.WebApi
+docker build -t devio-auth ./DevIO.Auth.WebApi
+
+# Rodar com docker-compose (opcional)
+docker-compose up -d
+
+☸️ Kubernetes
+
+kubectl apply -f k8s/jwt-secret.yaml
+kubectl apply -f k8s/auth-configmap.yaml
+kubectl apply -f k8s/auth-deployment.yaml
+kubectl apply -f k8s/auth-service.yaml
+kubectl apply -f k8s/auth-ingress.yaml
+
+Adicione ao seu /etc/hosts:
+
+127.0.0.1 auth.devio.local
+
+🔐 Endpoints de Autenticação
+POST /api/users/register → Criação de usuários
+
+POST /api/users/login → Geração de Access/Refresh Token
+
+POST /api/users/revoke → Revogação de Refresh Token
