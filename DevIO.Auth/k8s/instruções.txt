@@ -1,0 +1,119 @@
+﻿
+
+✅ 1. Secret para a chave JWT
+📄 jwt-secret.yaml
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+type: Opaque
+stringData:
+  JwtSettings__Key: "sua-chave-super-secreta-aqui"
+
+
+✅ 2. ConfigMap para AppSettings
+📄 auth-configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-configmap
+data:
+  JwtSettings__Issuer: "devio.auth"
+  JwtSettings__Audience: "devio.api"
+  JwtSettings__ExpiryMinutes: "60"
+  JwtSettings__RefreshTokenExpiryDays: "7"
+  ConnectionStrings__DefaultConnection: "Server=auth-db;Database=DevIOAuthDb;User Id=sa;Password=Your_password123;"
+
+
+✅ 3. Deployment
+📄 auth-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-api
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+        - name: auth-api
+          image: seu-usuario/auth-api:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: auth-configmap
+            - secretRef:
+                name: jwt-secret
+
+✅ 4. Service
+📄 auth-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+
+✅ 5. Ingress
+Assumindo que você tenha um Ingress Controller (como o NGINX) instalado:
+
+📄 auth-ingress.yaml
+yaml
+Copiar
+Editar
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: auth.devio.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 80
+
+
+Certifique-se de mapear auth.devio.local para o IP do cluster no seu /etc/hosts:
+
+127.0.0.1 auth.devio.local
+
+✅ 6. Aplicar os manifestos
+
+kubectl apply -f jwt-secret.yaml
+kubectl apply -f auth-configmap.yaml
+kubectl apply -f auth-deployment.yaml
+kubectl apply -f auth-service.yaml
+kubectl apply -f auth-ingress.yaml
+
+
+✅ 7. Teste
+
+Após aplicar, acesse:
+
+http://auth.devio.local/api/users/login

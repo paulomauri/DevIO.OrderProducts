@@ -1,0 +1,10 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-configmap
+data:
+  JwtSettings__Issuer: "devio.auth"
+  JwtSettings__Audience: "devio.api"
+  JwtSettings__ExpiryMinutes: "60"
+  JwtSettings__RefreshTokenExpiryDays: "7"
+  ConnectionStrings__DefaultConnection: "User ID=sa;Password=mauri#22;Initial Catalog=dbOrderManagement;Data Source=192.168.0.25;Encrypt=False;"

@@ -1,5 +1,8 @@
+using DevIO.Auth.DatabaseContext;
+using DevIO.Auth.Infrastructure;
 using DevIO.Auth.Models;
 using DevIO.Auth.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
 
+// 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Registra o UserService para registro de usuários e autenticação
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Register the JWT settings and token service
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -33,3 +43,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Cria o usuar admin se não existir
+SeedData.EnsureSeeded(app);

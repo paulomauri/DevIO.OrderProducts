@@ -6,6 +6,8 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+EXPOSE 7096
+EXPOSE 5038
 
 
 # This stage is used to build the service project

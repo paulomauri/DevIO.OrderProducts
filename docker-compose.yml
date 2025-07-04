@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  auth-api:
+    build:
+      context: .
+      dockerfile: DevIO.Auth.WebApi/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - auth-db
+
+  auth-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "mauri#22"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1434:1433"
+
+  worker-service:
+    build:
+      context: .
+      dockerfile: DevIO.Worker/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - auth-db
+
+  webapi-service:
+    build:
+      context: .
+      dockerfile: DevIO.OrderProducts.WebApi/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - auth-db

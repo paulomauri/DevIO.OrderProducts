@@ -16,22 +16,27 @@ public class AuthController : ControllerBase
 {
     private readonly JwtSettings _jwtSettings;
     private readonly ITokenService _tokenService;
+    private readonly IUserService _userService;
 
-    public AuthController(IOptions<JwtSettings> jwtSettings, ITokenService tokenService)
+
+    public AuthController(IOptions<JwtSettings> jwtSettings, ITokenService tokenService, IUserService userService)
     {
         _jwtSettings = jwtSettings.Value;
         _tokenService = tokenService;
+        _userService = userService;
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        if (request.Username != "admin" || request.Password != "admin")
-            return Unauthorized();
+        var user = await _userService.AuthenticateAsync(request);
+        if (user is null)
+            return Unauthorized("Credenciais inválidas.");
 
-        var accessToken = _tokenService.GenerateAccessToken(request.Username, "Admin");
-        var refreshToken = _tokenService.GenerateRefreshToken(request.Username);
+        var accessToken = _tokenService.GenerateAccessToken(user.Username, user.Role);
+        var refreshToken = _tokenService.GenerateRefreshToken(user.Username);
 
+        // Você pode persistir o refresh token aqui também (memória, banco ou Redis)
         InMemoryRefreshTokenStore.Save(refreshToken);
 
         return Ok(new

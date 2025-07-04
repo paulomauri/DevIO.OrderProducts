@@ -12,10 +12,10 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new Mappings.User());
+        modelBuilder.ApplyConfiguration(new Mappings.UserClaim());
+
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
-        modelBuilder.Entity<UserClaim>()
-            .HasOne(c => c.User)
-            .WithMany(u => u.Claims)
-            .HasForeignKey(c => c.UserId);
+
     }
 }
