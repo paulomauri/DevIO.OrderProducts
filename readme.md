@@ -17,6 +17,8 @@ DevIO.OrderProducts/
 
 🚀 Funcionalidades
 
+✅ API RESTful com ASP.NET Core 8
+
 ✅ CRUD de Produtos, Pedidos e Itens de Pedido
 
 ✅ API de autenticação separada com JWT e OAuth 2.0
