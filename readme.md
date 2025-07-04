@@ -16,6 +16,7 @@ DevIO.OrderProducts/
 └── k8s/								→ Manifests Kubernetes
 
 🚀 Funcionalidades
+
 ✅ CRUD de Produtos, Pedidos e Itens de Pedido
 
 ✅ API de autenticação separada com JWT e OAuth 2.0
